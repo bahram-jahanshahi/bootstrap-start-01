@@ -91,14 +91,44 @@ function createRow(id, email, password) {
         '                <td id="email' + id + '">' + email + '</td>\n' +
         '                <td id="password' + id + '">' + password + '</td>\n' +
         '                <td>' +
-        '<button class="btn btn-warning" onclick="fillForm(' + id + ')">edit</button>' +
+        '<button class="btn btn-warning" onclick="showEditModal(' + id + ')">edit</button>' +
         '</td>\n' +
         '            </tr>';
 }
 
-function fillForm(id) {
+function showEditModal(id) {
     const emailColumn = document.getElementById('email' + id);
     const passwordColumn = document.getElementById('password' + id);
 
-    alert(emailColumn.innerText);
+    $("#editId").val(id);
+    $("#editEmail").val(emailColumn.innerText);
+    $("#editPassword").val(passwordColumn.innerText);
+
+    $("#editModal").modal('show');
+
 }
+
+function editStudent() {
+    const id = $("#editId").val();
+    const email = $("#editEmail").val();
+    const password = $("#editPassword").val();
+
+    console.log(id + ', ' + email + ', ' + password);
+
+    const url = 'http://localhost:8081/student/edit?id=' + id + '&email=' + email + '&password=' + password;
+
+    console.log(url);
+
+    const http = new XMLHttpRequest();
+
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            $("#editModal").modal('hide');
+            loadStudentsAjax();
+        }
+    };
+
+    http.open('GET', url, true);
+    http.send();
+}
+
