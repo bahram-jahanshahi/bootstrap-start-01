@@ -10,7 +10,7 @@ function saveStudent() {
 
     const http = new XMLHttpRequest();
 
-    http.onreadystatechange = function() {
+    http.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             loadStudentsAjax();
             console.log('Student has been saved successfully. ');
@@ -45,14 +45,27 @@ function loadStudents() {
     tableBody.innerHTML = rows;
 }
 
+function showSpinner() {
+    const spinnerBox = document.getElementById('mySpinner');
+    spinnerBox.innerHTML = '<div class="spinner-border text-primary" role="status"  >\n' +
+        '                <span class="sr-only">Loading...</span>\n' +
+        '            </div>';
+}
+
+function hideSpinner() {
+    const spinnerBox = document.getElementById('mySpinner');
+    spinnerBox.innerHTML = '';
+}
+
 function loadStudentsAjax() {
     const tableBody = document.getElementById("table-body");
     tableBody.innerHTML = '';
-
+    // show spinner
+    showSpinner();
     const http = new XMLHttpRequest();
     const url = 'http://192.168.1.35:8081/student/all';
 
-    http.onreadystatechange = function() {
+    http.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             const studentList = JSON.parse(this.responseText);
             let rows = '';
@@ -64,6 +77,7 @@ function loadStudentsAjax() {
                 );
             }
             tableBody.innerHTML = rows;
+            setTimeout(hideSpinner, 1000);
         }
     }
 
@@ -74,8 +88,17 @@ function loadStudentsAjax() {
 function createRow(id, email, password) {
     return '        <tr>\n' +
         '                <th scope="row">' + id + '</th>\n' +
-        '                <td>' + email + '</td>\n' +
-        '                <td>' + password + '</td>\n' +
-        '                <td></td>\n' +
+        '                <td id="email' + id + '">' + email + '</td>\n' +
+        '                <td id="password' + id + '">' + password + '</td>\n' +
+        '                <td>' +
+        '<button class="btn btn-warning" onclick="fillForm(' + id + ')">edit</button>' +
+        '</td>\n' +
         '            </tr>';
+}
+
+function fillForm(id) {
+    const emailColumn = document.getElementById('email' + id);
+    const passwordColumn = document.getElementById('password' + id);
+
+    alert(emailColumn.innerText);
 }
